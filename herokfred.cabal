@@ -19,12 +19,13 @@ library
   build-depends:       base >= 4.7 && < 5
   default-language:    Haskell2010
 
-executable herokfred-exe
+executable herokfred
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , herokfred
+                     , optparse-applicative
   default-language:    Haskell2010
 
 test-suite herokfred-test
