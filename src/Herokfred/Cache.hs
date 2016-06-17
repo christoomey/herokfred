@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Herokfred.Cache
-    ( cacheApps
+    ( getApps
     ) where
 
 import Control.Exception (throwIO)
@@ -13,29 +13,30 @@ import Control.Lens ((.~), (^.), (&))
 import Data.Aeson
 import LoadEnv (loadEnv)
 import Network.Wreq
+import qualified Data.Text as T
 import qualified Data.ByteString.Char8 as B
+import qualified Alfred as A
 
 newtype Token = Token String
 
 data HerokuApp = HerokuApp
-    { appId :: String
-    , appName :: String
-    , appUrl :: String
+    { appName :: T.Text
+    , appUrl :: T.Text
     } deriving (Show)
 
 instance FromJSON HerokuApp where
     parseJSON (Object v) = do
-        id <- v .: "id"
         name <- v .: "name"
 
-        return $ HerokuApp id name ( dashboardUrl name )
+        return $ HerokuApp name $ dashboardUrl name
 
     parseJSON _ = mzero
 
-cacheApps :: IO ()
-cacheApps = do
-  apps <- requestApps =<< getToken
-  mapM_ (putStrLn . show) apps
+instance A.ToAlfredItem HerokuApp where
+    toAlfredItem (HerokuApp name url) = A.Item name url 0
+
+getApps :: IO [HerokuApp]
+getApps = requestApps =<< getToken
 
 requestApps :: Token -> IO [HerokuApp]
 requestApps token = do
@@ -61,5 +62,5 @@ getToken = do
 endpoint :: String
 endpoint = "https://api.heroku.com/apps"
 
-dashboardUrl :: String -> String
+dashboardUrl :: T.Text -> T.Text
 dashboardUrl = mappend "https://dashboard.heroku.com/apps/"

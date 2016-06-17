@@ -22,6 +22,8 @@ library
                      , lens
                      , bytestring
                      , aeson
+                     , alfred-workflow-cache
+                     , text
   default-language:    Haskell2010
 
 executable herokfred
@@ -31,6 +33,8 @@ executable herokfred
   build-depends:       base
                      , herokfred
                      , optparse-applicative
+                     , alfred-workflow-cache
+                     , text
   default-language:    Haskell2010
 
 test-suite herokfred-test
