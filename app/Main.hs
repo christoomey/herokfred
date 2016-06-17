@@ -2,6 +2,8 @@ module Main where
 
 import Options.Applicative
 
+import Herokfred.Cache
+
 main :: IO ()
 main = run =<< execParser
     (parseCommand `withInfo` "Interact with Heroku API")
@@ -17,7 +19,7 @@ run cmd =
     case cmd of
         Search (Just query) -> putStrLn $ "Search " <> query
         Search (Nothing) -> putStrLn "Search, but no query!!!"
-        Cache         -> putStrLn "Cache"
+        Cache         -> cacheApps
 
 withInfo :: Parser a -> String -> ParserInfo a
 withInfo opts desc = info (helper <*> opts) $ progDesc desc
